@@ -11,8 +11,18 @@ const path = require('node:path');
 
 console.log(path.sep);
 
-// Con path.join podemos unir una ruta: 
+// Con path.join podemos unir una ruta.
+
+// En el contexto de nuestra OS (Windows), esto deberá de imprimir: content\subfolder\test.txt
 
 const filePath = path.join('content', 'subfolder', 'test.txt');
 
 console.log(filePath);
+
+// El método path.basename te proporciona el nombre de un fichero dado.
+
+// El siguiente ejemplo deberá de imprimir: test.txt
+
+const baseName = path.basename("content\\subfolder\\test.txt")
+
+console.log(baseName);

@@ -1,7 +1,21 @@
 {
-  "name": "node-starter",
+  "name": "midu-node",
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  }
+  },
+  "version": "1.0.0",
+  "main": "1.os-info.js",
+  "keywords": [],
+  "author": "Ángel Raúl De Ávila Martínez - mr-ang3l",
+  "license": "ISC",
+  "description": "Proyecto que trata el tema de Node de forma inicial, conociendo algunas de sus funcionalidades.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mr-ang3l/prueba1_midu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mr-ang3l/prueba1_midu/issues"
+  },
+  "homepage": "https://github.com/mr-ang3l/prueba1_midu#readme"
 }

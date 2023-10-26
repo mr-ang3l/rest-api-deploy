@@ -1,3 +1,4 @@
 {
-    "editor.fontFamily": "Cascadia Pro, Consolas, 'Courier New', monospace"
+    "editor.fontFamily": "Cascadia Pro, Consolas, 'Courier New', monospace",
+    "editor.wordWrap": "on"
 }

@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/mr-ang3l/prueba1_midu/issues"
   },
-  "homepage": "https://github.com/mr-ang3l/prueba1_midu#readme"
+  "homepage": "https://github.com/mr-ang3l/prueba1_midu#readme",
+  "dependencies": {
+    "picocolors": "1.0.0"
+  }
 }

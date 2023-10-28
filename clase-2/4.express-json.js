@@ -12,38 +12,9 @@ const dittoJSON = require('./pokemon/ditto.json')
 
 // El siguiente middleware verificará si la petición entrante es de tipo POST y con su 'content-type' configurado a 'application/json', y en caso de que lo sea, procesará dicha petición de manera específica o particular.
 
-app.use((req, res, next) => {
-  console.log('Mi primer middleware')
+// La siguiente función realiza exactamente la misma tarea que la versión del archivo 3.express.js de forma automática.
 
-  // Es importante siempre colocar el método next() al final de cada middleware.
-
-  if (req.method !== 'POST') {
-    return next()
-  }
-
-  if (req.headers['content-type'] !== 'application/json') {
-    return next()
-  }
-
-  // Si el código llega hasta este punto, quiere decir que nuestra petición tiene el método POST y que el 'content-type' de su header es 'application/json'.
-
-  let body = ''
-  req.on('data', chunk => {
-    body += chunk.toString()
-  })
-  req.on('end', () => {
-    const data = JSON.parse(body)
-    data.timestamp = Date.now()
-
-    // Transformaremos la información recibida y la contendremos en la propiedad req.body
-
-    // Nota adicional: el objeto 'req' o 'request' es única por cada petición.
-
-    req.body = data
-
-    next()
-  })
-})
+app.use(express.json())
 
 app.get('/', (req, res) => {
   res.json({ name: 'Hola mundo' })

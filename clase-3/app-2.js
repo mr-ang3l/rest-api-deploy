@@ -2,7 +2,7 @@ const express = require('express')
 const movies = require('./movies.json')
 const crypto = require('node:crypto')
 const app = express()
-const { validateMovie } = require('./schemas/movies')
+const { validateMovie, validatePartialMovie } = require('./schemas/movies')
 const PORT = process.env.PORT ?? 1234
 
 app.disable('x-powered-by')
@@ -46,7 +46,11 @@ app.post('/movies', (req, res) => {
 
   if (result.error) {
     // El código de error 422 (UNprocessable Entity) también es aplicable.
-    return res.status(400).json({ error: result.error.message })
+    return res.status(400).json({
+
+      error: JSON.parse(result.error.message)
+
+    })
   }
 
   const newMovie = {
@@ -60,6 +64,27 @@ app.post('/movies', (req, res) => {
   // Status code 201 significa 'created', un recurso nuevo hecho.
 
   res.status(201).json(newMovie)
+})
+
+app.patch('/movies/:id', (req, res) {
+  const { id } = req.params
+
+  const result = validatePartialMovie(req.body)
+
+  if(!result.success) {
+    
+  }
+
+  // Incompleto. Minuto 1:02:30 .
+  const movieIndex = movies.findIndex(movie => movie.id === id)
+
+  if (movieIndex < 0) { 
+    return res.status(404).json({ message: 'Movie not found!' })
+  }
+
+  const movie = movies{movieIndex}
+
+
 })
 
 app.listen(PORT, () => {

@@ -16,8 +16,8 @@ const movieSchema = z.object({
 
   year: z.number().int().min(1900).max(2024),
   director: z.string(),
-  duration: z.number().int().min(60),
-  rate: z.number().min(0).max(10),
+  duration: z.number().int().positive(),
+  rate: z.number().min(0).max(10).default(0),
 
   // Esto incluso se puede complementar con un .containsWith() para definir un formato o extensión.
 
@@ -37,8 +37,14 @@ const movieSchema = z.object({
 
 // Esta función se encargará de validar si un objeto dado es igual al de referencia.
 
-function validateMovie (object) {
-  return movieSchema.safeParse(object)
+function validateMovie (input) {
+  return movieSchema.safeParse(input)
 }
 
-module.exportes = { validateMovie }
+function validatePartialMovie (input) {
+  // .partial() es un método que convierte a todas las partes de nuestro esquema en opcionales, de esta manera habilitándonos la posibilidad de modificar partes de objetos ya creados en la base de datos.
+
+  return movieSchema.partial().safeParse(input)
+}
+
+module.exports = { validateMovie, validatePartialMovie }

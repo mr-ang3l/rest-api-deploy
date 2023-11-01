@@ -23,7 +23,8 @@ Content-Type: application/json
 	"director": "Emma Tammi",
 	"duration": 109,
 	"poster": "https://m.media-amazon.com/images/I/71LcVhJz3DL.jpg",
-	"genre": "Terror"
+	"genre": ["Horror"],
+	"rate" : 4
 }
 
 ### Crear un película con POST: Error
@@ -32,6 +33,20 @@ POST http://localhost:1234/movies
 Content-Type: application/json
 
 {
-	"title": 4,
-	"year": 2023,
+	"title": 8,
+	"year": "hola",
+	"director": "Emma Tammi",
+	"duration": 109,
+	"poster": "https://m.media-amazon.com/images/I/71LcVhJz3DL.jpg",
+	"genre": ["Horror"]
+}
+
+### Actualizar una porción de una película ya publicada
+
+PATCH http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3
+
+Content-Type: application/json
+
+{
+	"year": 1993
 }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Prueba de mi API REST</title>
+	<style>
+		article {
+			border: 1px solid white;
+			gap: 1rem;
+			padding: 1rem;
+		}
+
+		img {
+			height: auto;
+			width: 320px;
+			max-width: 100%;
+		}
+	</style>
+	<script type="module">
+		fetch('https://probable-system-j765pxr5pq63jv4-1234.app.github.dev/movies')
+			.then(res => res.json())
+			.then(movies => {
+				const html = movies.map(movie => {
+					return `
+					<article data-id="${movie.id}">
+						<h2>${movie.title}</h2>
+						<img src="${movie.poster}" alt="${movie.title}">
+						<p>${movie.year}</p>
+						<p>Directed by: ${movie.director}</p>
+					</article>
+					`}).join(' ')
+
+					document.querySelector('main').innerHTML = html
+				})
+	</script>
+</head>
+<body>
+	
+</body>
+</html>

@@ -44,9 +44,11 @@ Content-Type: application/json
 ### Actualizar una porción de una película ya publicada
 
 PATCH http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3
-
 Content-Type: application/json
 
+// la propiedad "id" se ignora porque no está contemplada como un campo a validar en el archivo movies.js, por lo que al no ser incluida es automáticamente descartada como información relevante para nuestra base de datos y no se añade. 
 {
-	"year": 1993
+	"id": "id-inventada-por-un-usuario-queriéndose-hacer-el-hacker",
+	"title": "The Shawshank Redemption",
+	"year": 1994
 }

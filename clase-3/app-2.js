@@ -18,6 +18,8 @@ app.use(express.json()) // Esto es un middleware que tratará a la solicitud (pe
 app.get('/movies', (req, res) => {
   // La propiedad 'query' es un objeto que almacena todas las búsquedas o 'querys' contenidas en la solicitud del usuario a las cuales podemos acceder.
 
+  res.header('Access-Control-Allow-Origin', '*') // todos los orígenes distintos al nuestro, tienen permiso de acceso a esta API.
+
   const { genre } = req.query
 
   if (genre) {
@@ -84,6 +86,10 @@ app.patch('/movies/:id', (req, res) => {
     ...movies[movieIndex],
     ...result.data
   }
+
+  movies[movieIndex] = updateMovie
+
+  return res.json(updateMovie)
 })
 
 app.listen(PORT, () => {

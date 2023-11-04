@@ -66,25 +66,24 @@ app.post('/movies', (req, res) => {
   res.status(201).json(newMovie)
 })
 
-app.patch('/movies/:id', (req, res) {
-  const { id } = req.params
-
+app.patch('/movies/:id', (req, res) => {
   const result = validatePartialMovie(req.body)
 
-  if(!result.success) {
-    
+  if (!result.success) {
+    return res.status(400).json({ error: JSON.parse(result.error.message) })
   }
 
-  // Incompleto. Minuto 1:02:30 .
+  const { id } = req.params
   const movieIndex = movies.findIndex(movie => movie.id === id)
 
-  if (movieIndex < 0) { 
+  if (movieIndex === -1) {
     return res.status(404).json({ message: 'Movie not found!' })
   }
 
-  const movie = movies{movieIndex}
-
-
+  const updateMovie = {
+    ...movies[movieIndex],
+    ...result.data
+  }
 })
 
 app.listen(PORT, () => {

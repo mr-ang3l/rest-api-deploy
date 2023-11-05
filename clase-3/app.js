@@ -106,6 +106,10 @@ app.post('/movies', (req, res) => {
   res.status(201).json(newMovie)
 })
 
+// app.listen(PORT, () => {
+//   console.log(`Servidor conectado al puerto ${PORT}. Entra a https://probable-system-j765pxr5pq63jv4-${PORT}.app.github.dev/`)
+// })
+
 app.listen(PORT, () => {
-  console.log(`Servidor conectado al puerto ${PORT}. Entra a https://probable-system-j765pxr5pq63jv4-${PORT}.app.github.dev/`)
+  console.log(`Servidor conectado al puerto ${PORT}. Entra a https://localhost:${PORT}`)
 })

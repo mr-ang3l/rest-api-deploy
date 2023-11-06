@@ -2,7 +2,8 @@ const express = require('express')
 const movies = require('./movies.json')
 const crypto = require('node:crypto')
 const app = express()
-const z = require('zod')
+const cors = require('cors')
+const { validateMovie, validatePartialMovie } = require('./schemas/movies')
 const PORT = process.env.PORT ?? 1234
 
 app.disable('x-powered-by')
@@ -13,10 +14,35 @@ app.use(express.json()) // Esto es un middleware que tratará a la solicitud (pe
 //   res.json({ message: 'Hola mundo' })
 // })
 
+app.use(cors({
+  origin: (origin, callback) => {
+    const ACCEPTED_ORIGINS = [
+      'http://localhost:8080',
+      'http://localhost:1234',
+      'https://movies.com',
+      'https://midu.dev'
+    ]
+
+    if (ACCEPTED_ORIGINS.includes(origin)) {
+      return callback(null, true)
+    }
+
+    if (!origin) {
+      return callback(null, true)
+    }
+
+    return callback(new Error('Not allowed by CORS'))
+  }
+}))
+
 // Todos los recursos que sean MOVIES se identificarán con la ruta /movies.
 
 app.get('/movies', (req, res) => {
   // La propiedad 'query' es un objeto que almacena todas las búsquedas o 'querys' contenidas en la solicitud del usuario a las cuales podemos acceder.
+
+  // Todos los orígenes distintos al nuestro, tienen permiso de acceso a esta API.
+
+  res.header('Access-Control-Allow-Origin', '*')
 
   const { genre } = req.query
 
@@ -42,62 +68,25 @@ app.get('/movies/:id', (req, res) => {
 })
 
 app.post('/movies', (req, res) => {
-  const movieSchema = z.object({
-    title: z.string({
+  const result = validateMovie(req.body)
 
-      // Este mensaje se enviará tan pronto el usuario mande un tipo de dato equivocado.
+  if (result.error) {
+    // El código de error 422 (UNprocessable Entity) también es aplicable.
+    return res.status(400).json({
 
-      invalid_type_error: 'Movie title must be a string',
+      error: JSON.parse(result.error.message)
 
-      // Este mensaje se enviará tan pronto el usuario omita llenar este campo.
-
-      required_error: 'Movie title is required'
-    }),
-
-    // Zod permite la encadenación de métodos para especificar aún más un requerimiento.
-
-    year: z.number().int().min(1900).max(2024),
-    director: z.string(),
-    duration: z.number().int().min(60),
-    rate: z.number().min(0).max(10),
-
-    // Esto incluso se puede complementar con un .containsWith() para definir un formato o extensión.
-
-    poster: z.string().url({
-      message: 'Poster must be a valid URL'
-    }),
-
-    genre: z.array(
-      z.enum(['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 'Thriller', 'Sci-Fi']),
-      {
-        required_error: 'Movie genre is required.',
-        invalid_type_error: 'Movie genre must be an array of enum genre'
-      }
-    )
-
-  })
-  const {
-    title,
-    genre,
-    year,
-    director,
-    duration,
-    rate,
-    poster
-  } = req.body
-
-  // Esta parte no se consideraría como una acción fiel a la filosofía de la arquitectura REST dado que se están almacenando datos en memoria.
+    })
+  }
 
   const newMovie = {
-    id: crypto.randomUUID(), // Esta función genera un UUIID, es un módulo nativo de Node.
-    title,
-    genre,
-    year,
-    director,
-    duration,
-    rate: rate ?? 0,
-    poster
+    // Esta función genera un UUIID, es un módulo nativo de Node.
+    id: crypto.randomUUID(),
+    ...result.data
   }
+
+  // Esto no sería REST, porque estamos guardando
+  // el estado de la aplicación en memoria
 
   movies.push(newMovie)
 
@@ -106,10 +95,71 @@ app.post('/movies', (req, res) => {
   res.status(201).json(newMovie)
 })
 
+app.delete('/movies/:id', (req, res) => {
+  const { id } = req.params
+  const movieIndex = movies.findIndex(movie => movie.id === id)
+
+  if (movieIndex === -1) {
+    return res.status(404).json({ message: 'Movie not found' })
+  }
+
+  movies.splice(movieIndex, 1)
+
+  return res.json({ message: 'Movie deleted' })
+})
+
+app.patch('/movies/:id', (req, res) => {
+  const result = validatePartialMovie(req.body)
+
+  if (!result.success) {
+    return res.status(400).json({ error: JSON.parse(result.error.message) })
+  }
+
+  const { id } = req.params
+  const movieIndex = movies.findIndex(movie => movie.id === id)
+
+  if (movieIndex === -1) {
+    return res.status(404).json({ message: 'Movie not found!' })
+  }
+
+  const updateMovie = {
+    ...movies[movieIndex],
+    ...result.data
+  }
+
+  movies[movieIndex] = updateMovie
+
+  return res.json(updateMovie)
+})
+
+app.patch('/movies/:id', (req, res) => {
+  const result = validatePartialMovie(req.body)
+
+  if (!result.success) {
+    return res.status(400).json({ error: JSON.parse(result.error.message) })
+  }
+
+  const { id } = req.params
+  const movieIndex = movies.findIndex(movie => movie.id === id)
+
+  if (movieIndex === -1) {
+    return res.status(404).json({ message: 'Movie not found' })
+  }
+
+  const updateMovie = {
+    ...movies[movieIndex],
+    ...result.data
+  }
+
+  movies[movieIndex] = updateMovie
+
+  return res.json(updateMovie)
+})
+
 // app.listen(PORT, () => {
 //   console.log(`Servidor conectado al puerto ${PORT}. Entra a https://probable-system-j765pxr5pq63jv4-${PORT}.app.github.dev/`)
 // })
 
 app.listen(PORT, () => {
-  console.log(`Servidor conectado al puerto ${PORT}. Entra a https://localhost:${PORT}`)
+  console.log(`Servidor conectado al puerto ${PORT}. Entra a http://localhost:${PORT}`)
 })

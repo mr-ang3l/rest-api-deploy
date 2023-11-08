@@ -40,9 +40,9 @@ app.use(cors({
 app.get('/movies', (req, res) => {
   // La propiedad 'query' es un objeto que almacena todas las búsquedas o 'querys' contenidas en la solicitud del usuario a las cuales podemos acceder.
 
-  // Todos los orígenes distintos al nuestro, tienen permiso de acceso a esta API.
+  // Todos los orígenes distintos al nuestro, tienen permiso de acceso a esta API:
 
-  res.header('Access-Control-Allow-Origin', '*')
+  // res.header('Access-Control-Allow-Origin', '*')
 
   const { genre } = req.query
 
@@ -120,30 +120,6 @@ app.patch('/movies/:id', (req, res) => {
 
   if (movieIndex === -1) {
     return res.status(404).json({ message: 'Movie not found!' })
-  }
-
-  const updateMovie = {
-    ...movies[movieIndex],
-    ...result.data
-  }
-
-  movies[movieIndex] = updateMovie
-
-  return res.json(updateMovie)
-})
-
-app.patch('/movies/:id', (req, res) => {
-  const result = validatePartialMovie(req.body)
-
-  if (!result.success) {
-    return res.status(400).json({ error: JSON.parse(result.error.message) })
-  }
-
-  const { id } = req.params
-  const movieIndex = movies.findIndex(movie => movie.id === id)
-
-  if (movieIndex === -1) {
-    return res.status(404).json({ message: 'Movie not found' })
   }
 
   const updateMovie = {
